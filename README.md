@@ -7,7 +7,7 @@
 
 | 分類 | 内容 |
 |---|---|
-| データベース | PostgreSQL 16(Docker で起動)、BigQuery(sandbox) |
+| データベース | PostgreSQL 16(Docker で起動)、BigQuery(sandbox)、Snowflake(無料トライアル) |
 | SQL | JOIN(最大5表)、GROUP BY / HAVING、サブクエリ、CTE(WITH)、CASE、COALESCE |
 | ウィンドウ関数 | RANK / SUM() OVER(累計)/ LAG(前月比)/ PARTITION BY |
 | 性能 | インデックス、EXPLAIN ANALYZE による実行計画の確認 |
@@ -44,6 +44,7 @@ CSV はライセンスの都合でリポジトリに含めていません。上�
 
 - [インデックスと実行計画](extras/index_and_explain.sql): `product_id` にインデックスを付けると、Seq Scan(約16ms)から Index Only Scan(約0.1〜0.4ms)に変わり、約40〜100倍速くなった。値が偏った列(顧客の42%が SP 州)には効きにくいことも確認した
 - [BigQuery 版](extras/bigquery_monthly_orders.sql): 同じ集計を BigQuery で実行した。列指向のため、11.25MB の表から使う1列(776.88KB)だけが読まれる
+- [Snowflake 版](extras/snowflake_migration.sql): 3つの表を Snowflake に移し、件数・合計・NULL の数で検算した。文字で入った日時の列を型に直した表を作るだけで、分析 01・02・09 が PostgreSQL と同じ結果になった。CLONE と Time Travel(消したデータの取り戻し)も試した
 
 ## 気をつけたこと
 
@@ -76,5 +77,5 @@ docker exec pg psql -U postgres -d olist -f /work/queries/01_monthly_orders_and_
 ├── README.md
 ├── setup/setup_olist.sql   表の作成と CSV の取り込み
 ├── queries/                分析 SQL 10本
-└── extras/                 インデックスの実験、BigQuery 版
+└── extras/                 インデックスの実験、BigQuery 版、Snowflake 版
 ```
